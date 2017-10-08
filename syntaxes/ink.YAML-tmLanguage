@@ -1,0 +1,236 @@
+# [PackageDev] target_format: plist, ext: tmLanguage
+---
+name: ink
+scopeName: source.ink
+fileTypes: [ink, ink2]
+uuid: 5a0f60ba-87b8-4fa9-854c-6bf41f74bd98
+
+patterns:
+
+- {include: '#comments'}
+
+# knot declaration
+- match: ^\s*(={2,})\s*(function)?\s*(\w+)\s*(\([^)]*\))?\s*(={1,})?
+  captures:
+    '1': {name: markup.punctuation}
+    '2': {name: keyword.function}
+    '3': {name: entity.name.knot}
+    '4': {name: variable.parameter}
+    '5': {name: markup.punctuation}
+  name: meta.knot.declaration
+
+# stitch declaration
+- match: ^\s*(=)\s*(\w+)\s*(\([^)\n]*\))?\s*$
+  captures:
+    '1': {name: markup.punctuation}
+    '2': {name: entity.name.stitch}
+    '3': {name: variable.parameter}
+  name: meta.stitch.declaration
+
+
+# Choice and gather lines
+- {include: '#choice'}
+- {include: '#gather'}
+
+- {include: '#statements'}
+
+repository:
+  tag:
+    begin: (#)\s*
+    end: \s*$\n*
+    captures:
+      '1': {name: keyword.operator.hashtag}
+    contentName: entity.name.tag
+    patterns:
+    - include: '#comments'
+  comments:
+    patterns:
+    - begin: /\*\*
+      captures:
+        '0': {name: punctuation.definition.comment.json}
+      end: \*/
+      name: comment.block.documentation.json
+    - begin: /\*
+      captures:
+        '0': {name: punctuation.definition.comment.json}
+      end: \*/
+      name: comment.block.json
+    - captures:
+        '1': {name: punctuation.definition.comment.json}
+      match: (//).*$\n?
+      name: comment.line.double-slash.js
+
+  TODO:
+    match: ^\s*(?:(TODO\s*:)|(TODO\b))\s*(.*)
+    captures:
+      '1': { name: comment.todo.TODO }
+      '2': { name: comment.todo.TODO }
+    end: $\n?
+    name: comment.todo
+  include:
+    begin: ^\s*((INCLUDE)\s*(\S*))\s*
+    beginCaptures:
+      '1': {name: meta.include}
+      '2': {name: keyword.control.include}
+      '3': {name: string.other }
+    end: $\n?
+  external:
+    begin: ^\s*((EXTERNAL)\s*([\w_0-9]*\(\)))\s*
+    beginCaptures:
+      '1': {name: meta.external}
+      '2': {name: keyword.control.external}
+      '3': {name: support.function }
+    end: $\n?
+  globalVAR:
+    begin: ^\s*((VAR|CONST)\s*(\w+))\s*
+    beginCaptures:
+      '1': {name: meta.variable.declaration}
+      '2': {name: storage}
+      '3': {name: entity.name.variable}
+    end: $\n?
+    name: meta.variable.assignment
+
+  choice:
+    begin: ^\s*((?:[\*\+]\s?)+)\s*(\(\s*(\w+)\s*\))?
+    beginCaptures:
+      '1': {name: keyword.operator.weaveBullet.choice}
+      '2': {name: meta.label}
+      '3': {name: entity.name.label}
+    end: $\n?
+    name: choice
+    patterns:
+      - {include: '#comments'}
+      - match: (\[)([^\]]*)(\])
+        captures:
+          '1': {name: keyword.operator.weaveBracket}
+          '2': {name: string.content}
+          '3': {name: keyword.operator.weaveBracket}
+      - {include: '#divert'}
+      - {include: '#mixedContent'}
+
+  gather:
+    match: ^\s*((?:-\s*)+)(?!>)(\(\s*(\w+)\s*\))?
+    captures:
+      '1': {name: keyword.operator.weaveBullet.gather} 
+      '2': {name: meta.label}
+      '3': {name: entity.name.label}
+    name: meta.gather
+
+  multiLineLogic:
+    begin: '^\s*(\{)([\w_\s\*\/\-\+\&\|\%\<\>\.\(\)]+(:))?(?=[^}]+$)'
+    beginCaptures:
+      '0': {name: meta.logicBegin}
+      '1': {name: keyword.operator.logic}
+      '3': {name: keyword.operator.logic}
+    end: (\})
+    endCaptures:
+      '1': {name: keyword.operator}
+    contentName: meta.multilineLogicInner
+    name: meta.multilineLogic
+    patterns:
+      - match: '^\s*else\s*\:'
+        name: conditional.else
+      - begin: '^\s*(-)\s?[^:]+(:)'
+        beginCaptures:
+          '1': {name: keyword.operator}
+          '2': {name: keyword.operator}
+        end: $\n?
+        name: conditional.clause
+        patterns:
+          - {include: '#mixedContent'}
+
+      - {include: '#statements'}
+
+  inlineConditional:
+      begin: '(\{)[^:\|\}]+:'
+      beginCaptures:
+        '1': {name: keyword.operator.inlineConditionalStart}
+      end: (\})
+      endCaptures:
+        '1': {name: keyword.operator.inlineConditionalEnd}
+      name: entity.inlineConditional
+      patterns:
+        - match: \|
+          name: keyword.operator.inlineConditionalBranchSeparator
+        - {include: '#mixedContent'}
+
+  inlineSequence:
+    begin: (\{)\s*(~|&|!|\$)?(?=([^\|]*\|(?!\|)[^\}]*)\})
+    beginCaptures:
+      '1': {name: keyword.operator.inlineSequenceStart}
+      '2': {name: keyword.operator.inlineSequenceTypeChar}
+    end: \}
+    endCaptures:
+      '0': {name: keyword.operator.inlineSequenceEnd}
+    name: entity.inlineSequence
+    patterns:
+      - match: \|(?!\|)
+        name: keyword.operator.inlineSequenceSeparator
+      - {include: '#mixedContent'}
+      
+  inlineLogic:
+    begin: (\{)
+    beginCaptures:
+      '1': {name: keyword.operator.inlineLogicStart}
+    end: (\})
+    endCaptures:
+      '1': {name: keyword.operator.inlineLogicEnd}
+    name: meta.logic
+
+  logicLine:
+    match: \s*(~\s*.*)$
+    captures:
+      '0': {name: meta.logic}
+
+  divert:
+      match: (->|<-)\s*((?:(DONE)|(END)|(\w+))(?:\s*\.\s*(?:\w+))*\s*(?:\([^\)]+\))?)?
+      name: meta.divert
+      captures:
+         '1': {name: keyword.operator.divert}
+         '3': {name: keyword.done}
+         '4': {name: keyword.end}
+         '5': {name: variable.divertTarget}
+
+  mixedContent:
+    patterns:
+      - {include: '#inlineConditional'}
+      - {include: '#inlineSequence'}
+      - {include: '#inlineLogic'}
+      - {include: '#divert'}
+      - match: <>
+        name: constant.glue
+
+      # Hrm, the bold/italic stuff seems to be more trouble than it's worth :-(
+      # - begin: \*_|_\*
+      #   end: \*_|_\*|\[|\{|->|\n
+      #   contentName: string.boldItalic
+      # - begin: \*
+      #   end: \*|\[|\{|->|\n
+      #   contentName: string.bold
+      # - begin: _
+      #   end: _|\[|\{|->|\n
+      #   contentName: string.italic
+
+      # Final fallback
+      # 26/03/16 - Switch off this semantic name for the main text content,
+      # since it messes with word wrapping, and doesn't seem to give any
+      # particular benefit.
+      # - match: .
+      #   name: string.content
+
+  statements:
+    patterns:
+      - {include: '#include'}
+      - {include: '#external'}
+      - {include: '#comments'}
+      - {include: '#TODO'}
+      - {include: '#globalVAR'}
+      - {include: '#choice'}
+      - {include: '#gather'}
+      - {include: '#multiLineLogic'}
+      - {include: '#endOfSection'}
+      - {include: '#logicLine'}
+      - {include: '#mixedContent'}
+      - {include: '#tag'}
+    
+...

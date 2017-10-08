@@ -1,0 +1,44 @@
+{
+    "name": "ink",
+    "displayName": "ink",
+    "description": "Inkle's Ink scripting language support for Visual Studio Code",
+    "version": "1.0.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/sequitur/ink-vscode.git"
+    },
+    "author": {
+        "name": "Bruno Dias",
+        "email": "bruno.r.dias@gmail.com"
+    },
+    "publisher": "brunodias",
+    "engines": {
+        "vscode": "^1.16.0"
+    },
+    "categories": [
+        "Languages"
+    ],
+    "keywords": [
+        "ink",
+        "inkle",
+        "syntax"
+    ],
+    "icon": "images/icon.png",
+    "galleryBanner": {
+        "color": "#BEBEBE",
+        "theme": "light"
+    },
+    "contributes": {
+        "languages": [{
+            "id": "ink",
+            "aliases": ["Ink", "ink"],
+            "extensions": [".ink",".ink2"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "ink",
+            "scopeName": "source.ink",
+            "path": "./syntaxes/ink.tmLanguage"
+        }]
+    }
+}
