@@ -11,6 +11,9 @@ Support for Inkle's [Ink](https://github.com/inkle/ink) language in Visual Studi
 
 ## Release Notes
 
+### 1.1.0
+- Add word/node count feature.
+
 ### 1.0.0
 
 Initial release.
