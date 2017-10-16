@@ -5,7 +5,9 @@ Support for Inkle's [Ink](https://github.com/inkle/ink) language in Visual Studi
 ## Features
 
 - Syntax highlighting using the .tmLanguage file included in the Ink source repository.
-- Sensible language configuration defaults for Ink
+- Accurate word count in Ink files. Ignores comments, knot/stitch declarations and logic blocks, counting only actual content text.
+- Node (knot/stitch) count in Ink files.
+- Sensible language configuration defaults for Ink.
 
 ## Release Notes
 
