@@ -2,7 +2,7 @@
     "name": "ink",
     "displayName": "ink",
     "description": "Inkle's Ink scripting language support for Visual Studio Code",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "repository": {
         "type": "git",
         "url": "https://github.com/sequitur/ink-vscode.git"
@@ -11,6 +11,7 @@
         "name": "Bruno Dias",
         "email": "bruno.r.dias@gmail.com"
     },
+    "license": "MIT",
     "publisher": "bruno-dias",
     "engines": {
         "vscode": "^1.16.0"
