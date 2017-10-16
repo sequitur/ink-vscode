@@ -1,3 +1,5 @@
+- Write and tool up unit tests
+
 # Syntax Highlighting
 - Better highlighting for knot/stitch/function parameters: highlight individual params, not punctuation.
 - Highlight strings and numbers in variable declarations.

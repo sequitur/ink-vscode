@@ -18,6 +18,10 @@
     "categories": [
         "Languages"
     ],
+    "activationEvents": [
+        "onLanguage:ink"
+    ],
+    "main": "./out/src/extension",
     "keywords": [
         "ink",
         "inkle",
@@ -29,16 +33,37 @@
         "theme": "light"
     },
     "contributes": {
-        "languages": [{
-            "id": "ink",
-            "aliases": ["Ink", "ink"],
-            "extensions": [".ink",".ink2"],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "ink",
-            "scopeName": "source.ink",
-            "path": "./syntaxes/ink.tmLanguage"
-        }]
+        "languages": [
+            {
+                "id": "ink",
+                "aliases": [
+                    "Ink",
+                    "ink"
+                ],
+                "extensions": [
+                    ".ink",
+                    ".ink2"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "ink",
+                "scopeName": "source.ink",
+                "path": "./syntaxes/ink.tmLanguage"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install"
+    },
+    "devDependencies": {
+        "@types/node": "^8.0.34",
+        "typescript": "^2.5.3",
+        "vscode": "^1.1.6"
     }
 }
