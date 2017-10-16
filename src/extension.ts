@@ -1,8 +1,11 @@
 'use strict';
 /* Ink for VS Code Extension Main File */
 
-import { ExtensionContext } from "vscode";
+import { ExtensionContext, DocumentFilter, languages } from "vscode";
 import { WordAndNodeCounter, WordNodeCounterController } from "./wordcount";
+import { DivertCompletionProvider } from "./completion";
+
+const INK : DocumentFilter = { language: 'ink' };
 
 export function activate(ctx: ExtensionContext) {
 
@@ -14,4 +17,7 @@ export function activate(ctx: ExtensionContext) {
     // deactivated again.
     ctx.subscriptions.push(controller);
     ctx.subscriptions.push(wordCounter);
+
+    // Enable the completion provider.
+    ctx.subscriptions.push(languages.registerCompletionItemProvider(INK, new DivertCompletionProvider(), '>'));
 }

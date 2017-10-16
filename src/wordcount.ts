@@ -78,7 +78,6 @@ export class WordAndNodeCounter {
         }
         // Various single-line directives/statements to ignore in wc
         if (line.match(/^\s*(~|=|VAR|EXTERNAL|INCLUDE)/) === null) {
-            console.log(line);
             lines.push(line);
         }
         return { scope, lines };
