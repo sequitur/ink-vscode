@@ -5,7 +5,7 @@ import { window, workspace, commands, Disposable, ExtensionContext, StatusBarAli
 /* Provides word count functionality. Mostly adapted from the example
     word counter extension.
 */
-export class WordCounter {
+export class WordAndNodeCounter {
     private _statusBarItem: StatusBarItem;
 
     private plural (n: number, word: string) : string {
@@ -49,29 +49,29 @@ export class WordCounter {
             if (line.match(/\}/) !== null) {
                 scope = "root";
                 // Add just the part of the line after the }, if anything.
-                return WordCounter.lineReducer({ scope, lines }, (line.match(/}(.*)/)[1]));
+                return WordAndNodeCounter.lineReducer({ scope, lines }, (line.match(/}(.*)/)[1]));
             }
             return stack;
         }
         if (scope === "comment") { // Continuing multiline comment
             if (line.match(/\*\//) !== null) {
                 scope = "root";
-                return WordCounter.lineReducer({ scope, lines }, (line.match(/\*\/(.*)/)[1]));
+                return WordAndNodeCounter.lineReducer({ scope, lines }, (line.match(/\*\/(.*)/)[1]));
             }
             return stack;
         }
         if (line.match(/\{/) !== null) { // Start of { block }
             if (line.match(/\}/) !== null)
-                return WordCounter.lineReducer(stack, line.replace(/\{.*\}/, ""));
+                return WordAndNodeCounter.lineReducer(stack, line.replace(/\{.*\}/, ""));
             scope = "multiline";
             return { scope, lines };
         }
         if (line.match(/\/\//) !== null) { // // Comment
-            return WordCounter.lineReducer(stack, line.replace(/\/\/.*/, ""));
+            return WordAndNodeCounter.lineReducer(stack, line.replace(/\/\/.*/, ""));
         }
         if (line.match(/\/\*/)) { // Start of /* comment
             if (line.match(/\*\//)) {
-                return WordCounter.lineReducer(stack, line.replace(/\/\*.*\*\//, ""));
+                return WordAndNodeCounter.lineReducer(stack, line.replace(/\/\*.*\*\//, ""));
             }
             scope = "comment";
             return { scope, lines };
@@ -94,7 +94,7 @@ export class WordCounter {
          * that should not be counted. */
 
 
-        return docContent.split("\n").reduce(WordCounter.lineReducer, { scope: 'root', lines: [] })
+        return docContent.split("\n").reduce(WordAndNodeCounter.lineReducer, { scope: 'root', lines: [] })
             .lines
             .join(" ")
             .split(/\s/)
@@ -111,11 +111,11 @@ export class WordCounter {
     }
 }
 
-export class WordCounterController {
-    private _wordCounter: WordCounter;
+export class WordNodeCounterController {
+    private _wordCounter: WordAndNodeCounter;
     private _disposable: Disposable;
 
-    constructor (wordCounter: WordCounter) {
+    constructor (wordCounter: WordAndNodeCounter) {
         this._wordCounter = wordCounter;
         this._wordCounter.updateWordCount();
 
