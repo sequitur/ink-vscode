@@ -1,4 +1,6 @@
-import { Uri, Position, CompletionItem, CompletionItemKind, Disposable, TextDocument, TextDocumentChangeEvent, workspace } from "vscode";
+import { Uri, Position, CompletionItem, CompletionItemKind, Disposable,
+    Location, TextDocument, TextDocumentChangeEvent,
+    workspace } from "vscode";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -11,7 +13,8 @@ const PERMANENT_DIVERTS = [
 
 class DivertTarget {
     constructor ( public readonly name : string | null) { }
-
+    public line : number;
+    public readonly parentFile : NodeMap;
     public toCompletionItem () : CompletionItem {
         return new CompletionItem(this.name, CompletionItemKind.Variable);
     }
@@ -21,6 +24,10 @@ class LabelNode extends DivertTarget {
 
     public get line () {
         return this._line + this.parentStitch.startLine;
+    }
+
+    public get parentFile () {
+        return this.parentStitch.parentKnot.parentFile;
     }
 
     constructor (
@@ -37,8 +44,16 @@ class LabelNode extends DivertTarget {
 class StitchNode extends DivertTarget {
     public readonly labels : LabelNode[]
 
+    public get line () {
+        return this.startLine;
+    }
+
     public get startLine () {
         return this.parentKnot.startLine + this._relativeStart;
+    }
+
+    public get parentFile () {
+        return this.parentKnot.parentFile;
     }
 
     public get endLine () {
@@ -68,6 +83,10 @@ class StitchNode extends DivertTarget {
 class KnotNode extends DivertTarget {
 
     public readonly stitches;
+
+    public get line () {
+        return this.startLine;
+    }
 
     constructor (
         public readonly name : string | null,
@@ -210,8 +229,8 @@ function stitchFor (filePath : string, line : number) : StitchNode | null {
     return stitch;
 }
 
-/* Gets the valid divert targets for a given line and file. */
-export function getDivertTargets (filePath : string, line : number) : CompletionItem[] {
+/* Gets the divert names that are in scope for a given line and file. */
+function getDivertsInScope (filePath: string, line : number) : DivertTarget[] {
     if (nodeMaps[filePath]) {
         let targets : DivertTarget[] = [];
         const scope = getIncludeScope(filePath);
@@ -230,14 +249,25 @@ export function getDivertTargets (filePath : string, line : number) : Completion
         } else {
             console.log("WARN: Couldn't find current stitch for line ", line);
         }
-
-        return targets
-            .filter(target => target.name !== null)
-            .map(target => target.toCompletionItem())
-            .concat(PERMANENT_DIVERTS);
+    
+        return targets;
     }
     console.log(`Node map missing for file ${filePath}`);
     return [];
+}
+
+export function getDefinitionByNameAndScope (name: string, filePath : string, line : number) : Location {
+    const divert = getDivertsInScope(filePath, line)
+        .find(target => target.name === name);
+    return new Location(Uri.file(divert.parentFile.filePath), new Position(divert.line, 0));
+}
+
+/* Returns completion items for divert target names for a given line and file. */
+export function getDivertCompletionTargets (filePath : string, line : number) : CompletionItem[] {
+    return getDivertsInScope(filePath, line)
+        .filter(target => target.name !== null)
+        .map(target => target.toCompletionItem())
+        .concat(PERMANENT_DIVERTS);
 }
 
 export class NodeController {

@@ -13,7 +13,7 @@ export class DivertCompletionProvider implements CompletionItemProvider {
         if (prefix === "->->") return;
         // Ignore any other usage of >
         if (prefix.match(/->$/) === null) return;
-        return NodeMap.getDivertTargets(document.uri.fsPath, position.line);
+        return NodeMap.getDivertCompletionTargets(document.uri.fsPath, position.line);
     }
 
 }
