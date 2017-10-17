@@ -10,10 +10,10 @@
 In order of complication...
 
 - Intellisense completion for knot/stitch/function names. Partially done; still needs:
-    - Completion for labels
     - Completion for stitches/labels inside another knot
+- Go to definition for stitches and labels in different knots
 - Knot/stitch/function param hints
 - Codelens for function/knot/stitches
 - Codelens showing possible return points from a tunnel?
-- Inky/Unity tools interactive preview
+- Inky/Unity tools esque interactive preview
 - Debugging
