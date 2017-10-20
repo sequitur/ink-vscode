@@ -16,7 +16,7 @@ class DivertTarget {
     public line : number;
     public readonly parentFile : NodeMap;
     public toCompletionItem () : CompletionItem {
-        return new CompletionItem(this.name, CompletionItemKind.Variable);
+        return new CompletionItem(this.name, CompletionItemKind.Reference);
     }
 }
 
@@ -94,6 +94,7 @@ class KnotNode extends DivertTarget {
         public readonly endLine : number,
         public readonly parentFile : NodeMap,
         textContent : string,
+        private readonly isFunction : boolean = false,
         private readonly lastLine : boolean = false
     ) {
         super(name);
@@ -129,7 +130,8 @@ class KnotNode extends DivertTarget {
     }
 
     public toCompletionItem () : CompletionItem {
-        return new CompletionItem(this.name, CompletionItemKind.Variable);
+        const itemKind = this.isFunction ? CompletionItemKind.Function : CompletionItemKind.Reference;
+        return new CompletionItem(this.name, itemKind);
     }
 }
 
@@ -142,26 +144,28 @@ class NodeMap {
         const lines = fileText.split("\n");
         this.knots = lines
             .reduce((
-                {nodes, currentNode, lastStart, lastName}
-                : { nodes: KnotNode[], currentNode: string[], lastStart : number, lastName : string | null }
+                {nodes, currentNode, lastStart, lastName, isFunction}
+                : { nodes: KnotNode[], currentNode: string[], lastStart : number, lastName : string | null, isFunction }
                 , line : string
                 , index : number) => {
-                    if (line.match(/^\s*===(\s*function)?\s*(\w+)/)) {
-                        // Found the start of a new knot.
-                        const newName = line.match(/^\s*===(\s*function)?\s*(\w+)/)[2];
-                        const node = new KnotNode(lastName, lastStart, index, this, currentNode.join("\n"));
-                        nodes.push(node);
-                        return { nodes, currentNode: [line], lastStart: index, lastName: newName };
-                    }
-                    if (index === lines.length - 1) {
-                        // Found the last line
-                        const node = new KnotNode(lastName, lastStart, index + 1, this, currentNode.concat(line).join("\n"), true);
-                        nodes.push(node);
-                        return { nodes, currentNode: [line], lastStart: index, lastName: null };
-                    }
-                    currentNode.push(line);
-                    return { nodes, currentNode, lastStart, lastName };
-            }, { nodes: [], currentNode: [], lastStart: 0, lastName: null })
+                        if (line.match(/^\s*===(\s*function)?\s*(\w+)/)) {
+                            // Found the start of a new knot.
+                            const match = line.match(/^\s*===(\s*function)?\s*(\w+)/);
+                            const newName = match[2];
+                            const foundFunction = (!!match[1]);
+                            const node = new KnotNode(lastName, lastStart, index, this, currentNode.join("\n"), isFunction);
+                            nodes.push(node);
+                            return { nodes, currentNode: [line], lastStart: index, lastName: newName, isFunction: foundFunction };
+                        }
+                        if (index === lines.length - 1) {
+                            // Found the last line
+                            const node = new KnotNode(lastName, lastStart, index + 1, this, currentNode.concat(line).join("\n"), false, true);
+                            nodes.push(node);
+                            return { nodes, currentNode: [line], lastStart: index, lastName: null, isFunction };
+                        }
+                        currentNode.push(line);
+                        return { nodes, currentNode, lastStart, lastName, isFunction };
+            }, { nodes: [], currentNode: [], lastStart: 0, lastName: null, isFunction: false })
             .nodes;
         this.includes = lines
             .filter(line => line.match(/^\s*INCLUDE\s+(\w+\.ink)/))
