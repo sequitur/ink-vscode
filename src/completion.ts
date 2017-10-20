@@ -7,12 +7,9 @@ export class DivertCompletionProvider implements CompletionItemProvider {
     public provideCompletionItems (document: TextDocument, position: Position) : CompletionItem[] {
         // Make sure we are at the end of a valid divert arrow.
         // Ignore a > at the start of a line.
-        if (position.character <= 1) return;
-        const prefix = document.getText(new Range(position.with(position.line, Math.max(position.character - 4, 0)), position));
-        // Ignore a double divert end of tunnel operator.
-        if (prefix === "->->") return;
-        // Ignore any other usage of >
-        if (prefix.match(/->$/) === null) return;
+        const before = document.getText(new Range(position.with(position.line, 0), position));
+        if (!/(->|<-) ?$/.test(before)) return;
+        if (/-> ?-> ?$/.test(before)) return;
         return NodeMap.getDivertCompletionTargets(document.uri.fsPath, position.line);
     }
 

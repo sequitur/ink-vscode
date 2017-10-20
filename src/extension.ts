@@ -26,7 +26,7 @@ export function activate(ctx: ExtensionContext) {
     ctx.subscriptions.push(nodeMapController);
 
     // Enable the completion provider.
-    ctx.subscriptions.push(languages.registerCompletionItemProvider(INK, new DivertCompletionProvider(), '>'));
+    ctx.subscriptions.push(languages.registerCompletionItemProvider(INK, new DivertCompletionProvider(), '>', '-', ' '));
 
     // Enable the definition provider.
     ctx.subscriptions.push(languages.registerDefinitionProvider(INK, new InkDefinitionProvider()));
