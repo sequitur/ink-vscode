@@ -26,3 +26,7 @@ Support for Inkle's [Ink](https://github.com/inkle/ink) language in Visual Studi
 ### 1.0.0
 
 Initial release.
+
+## License
+
+MIT © [Bruno Dias](http://segue.pw/)
