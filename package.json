@@ -14,10 +14,10 @@
     "license": "MIT",
     "publisher": "bruno-dias",
     "engines": {
-        "vscode": "^1.16.0"
+        "vscode": "^1.24.0"
     },
     "categories": [
-        "Languages"
+        "Programming Languages"
     ],
     "activationEvents": [
         "onLanguage:ink"
@@ -54,7 +54,28 @@
                 "scopeName": "source.ink",
                 "path": "./syntaxes/ink.tmLanguage"
             }
-        ]
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "Ink configuration",
+            "properties": {
+                "ink.mainStoryPath": {
+                    "scope": "resource",
+                    "type": "string",
+                    "description": "Path to the main ink file, used by Inklecate to build the story."
+                },
+                "ink.inklecateExecutablePath": {
+                    "scope": "resource",
+                    "type": "string",
+                    "description": "Path to the inklecate executable."
+                },
+                "ink.runThroughMono": {
+                    "scope": "resource",
+                    "type": "boolean",
+                    "description": "Runs 'inklecateExecutablePath' through mono."
+                }
+            }
+        }
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
@@ -64,7 +85,11 @@
     },
     "devDependencies": {
         "@types/node": "^8.0.34",
-        "typescript": "^2.5.3",
-        "vscode": "^1.1.6"
+        "typescript": "^2.5.3"
+    },
+    "dependencies": {
+        "vscode": "^1.1.18",
+        "vscode-languageclient": "^4.2.1",
+        "ink-language-server": "^0.1.3"
     }
 }

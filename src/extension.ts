@@ -6,11 +6,11 @@ import { WordAndNodeCounter, WordNodeCounterController } from "./wordcount";
 import { DivertCompletionProvider } from "./completion";
 import * as NodeMap from "./nodemap";
 import { InkDefinitionProvider } from "./definitions";
+import { activateLanguageClient, deactivateLanguageClient } from "./client";
 
-const INK : DocumentFilter = { language: 'ink' };
+const INK : DocumentFilter = {scheme: 'file', language: 'ink'};
 
 export function activate(ctx: ExtensionContext) {
-
     // Create a new word counter.
     const wordCounter = new WordAndNodeCounter();
     const wcController = new WordNodeCounterController(wordCounter);
@@ -30,4 +30,10 @@ export function activate(ctx: ExtensionContext) {
 
     // Enable the definition provider.
     ctx.subscriptions.push(languages.registerDefinitionProvider(INK, new InkDefinitionProvider()));
+
+    activateLanguageClient(ctx);
+}
+
+export function deactivate(): Thenable<void> {
+    return deactivateLanguageClient();
 }
