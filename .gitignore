@@ -1,3 +1,7 @@
 node_modules
 out
-.vsix
+*.vsix
+
+webview/preview.css
+webview/preview.js
+webview/preview.html

@@ -1,0 +1,71 @@
+/*
+ * Parts of this stylesheet were heavily borrowed from inkjs.
+ *
+ * inkjs is licensed under the MIT licence.
+ * Copyright (c) 2017 Yannick Lohse.
+ *
+ * https://github.com/y-lohse/inkjs
+ */
+
+html {
+    height: 100%;
+    margin-bottom: 1px;
+}
+
+body {
+    font-family: sans-serif;
+}
+
+.container {
+    display: block;
+    max-width: 35.5em;
+    margin: 0 auto;
+    padding: 1.25em;
+    overflow-x : hidden;
+}
+
+p, a {
+    color: var(--vscode-foreground);
+    line-height: 1.7em;
+    font-size: 13pt;
+}
+
+p {
+    opacity: 0.0;
+    transition-property: opacity, height;
+    transition-duration: 1s;
+}
+
+p.show {
+    opacity: 1.0;
+}
+
+p.choice {
+    text-align: center;
+    transition-property: opacity, height, margin;
+}
+
+p.disappear {
+    height: 0;
+    margin: 0;
+}
+
+p.end-of-story {
+    text-align: center;
+    font-weight: bold;
+    color: var(--vscode-foreground);
+}
+
+p.tag {
+    text-align: center;
+    font-style: italic;
+    color: var(--vscode-foreground);
+}
+
+p.show.tag, p.show.end-of-story {
+    opacity: 0.5;
+}
+
+a:hover {
+    color: var(--vscode-textLink-activeForeground);
+}

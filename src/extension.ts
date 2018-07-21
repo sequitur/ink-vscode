@@ -7,6 +7,7 @@ import { DivertCompletionProvider } from "./completion";
 import * as NodeMap from "./nodemap";
 import { InkDefinitionProvider } from "./definitions";
 import { activateLanguageClient, deactivateLanguageClient } from "./client";
+import { activateInkPreview } from "./preview";
 
 const INK : DocumentFilter = {scheme: 'file', language: 'ink'};
 
@@ -31,7 +32,11 @@ export function activate(ctx: ExtensionContext) {
     // Enable the definition provider.
     ctx.subscriptions.push(languages.registerDefinitionProvider(INK, new InkDefinitionProvider()));
 
+    // Enable the language client.
     activateLanguageClient(ctx);
+
+    // Enable the interactive preview.
+    activateInkPreview(ctx);
 }
 
 export function deactivate(): Thenable<void> {
