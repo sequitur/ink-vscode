@@ -77,8 +77,11 @@
                 },
                 "ink.runThroughMono": {
                     "scope": "resource",
-                    "type": "boolean",
-                    "description": "Runs 'inklecateExecutablePath' through mono."
+                    "type": [
+                        "boolean",
+                        "string"
+                    ],
+                    "description": "When set to true, runs 'inklecateExecutablePath' using the mono command. You can also specify an absolute path to the mono executable."
                 }
             }
         }
@@ -86,8 +89,9 @@
     "scripts": {
         "vscode:prepublish": "npm run compile",
         "compile": "npm run compile:webview && tsc -p ./",
-        "compile:webview": "webpack --config webview/webpack.config.js",
-        "watch": "npm run compile:webview && tsc -watch -p ./",
+        "watch": "tsc -watch -p ./",
+        "compile:webview": "webpack --config webview/webpack.config.js --info-verbosity verbose",
+        "watch:webview": "webpack -w --config webview/webpack.config.js --info-verbosity verbose",
         "postinstall": "node ./node_modules/vscode/bin/install"
     },
     "devDependencies": {
@@ -104,7 +108,6 @@
     "dependencies": {
         "vscode": "^1.1.18",
         "vscode-languageclient": "^4.2.1",
-        "ink-language-server": "^0.1.6",
-        "inkjs": "^1.7.1"
+        "ink-language-server": "^0.2.0"
     }
 }

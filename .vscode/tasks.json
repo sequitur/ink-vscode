@@ -4,9 +4,9 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Webpack Watch",
             "type": "npm",
-            "script": "watch",
-            "problemMatcher": "$tsc-watch",
+            "script": "watch:webview",
             "isBackground": true,
             "presentation": {
                 "reveal": "never"
@@ -14,7 +14,47 @@
             "group": {
                 "kind": "build",
                 "isDefault": true
+            },
+            "problemMatcher": {
+                "owner": "webpack",
+                "fileLocation": "absolute",
+                "pattern": [{
+                    "regexp": "ERROR in [^ ]* (.*):(.*):(.*)",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3
+                },
+                {
+                        "regexp": ".*",
+                        "message": 0
+                }
+                ],
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "Compilation starting…",
+                    "endsPattern": "Compilation finished"
+                }
             }
+        },
+        {
+            "label": "Compile Watch",
+            "type": "npm",
+            "script": "watch",
+            "problemMatcher": "$tsc-watch",
+            "isBackground": true,
+            "presentation": {
+                "reveal": "never"
+            },
+            "group": "build"
+        },
+        {
+            "label": "Watch",
+            "isBackground": true,
+            "dependsOn": ["Webpack Watch", "Compile Watch"],
+            "presentation": {
+                "reveal": "never"
+            },
+            "group": "build"
         }
     ]
 }
