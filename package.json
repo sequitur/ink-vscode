@@ -14,7 +14,7 @@
     "license": "MIT",
     "publisher": "bruno-dias",
     "engines": {
-        "vscode": "^1.24.1"
+        "vscode": "^1.25.1"
     },
     "categories": [
         "Programming Languages"
@@ -108,6 +108,6 @@
     "dependencies": {
         "vscode": "^1.1.18",
         "vscode-languageclient": "^4.2.1",
-        "ink-language-server": "^0.2.0"
+        "ink-language-server": "^0.2.1"
     }
 }
