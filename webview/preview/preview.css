@@ -10,10 +10,12 @@
 html {
     height: 100%;
     margin-bottom: 1px;
+    overflow-x : hidden;
 }
 
 body {
     font-family: sans-serif;
+    overflow-x : hidden;
 }
 
 .container {
