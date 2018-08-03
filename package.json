@@ -108,6 +108,6 @@
     "dependencies": {
         "vscode": "^1.1.18",
         "vscode-languageclient": "^4.2.1",
-        "ink-language-server": "^0.2.1"
+        "ink-language-server": "^0.2.3"
     }
 }

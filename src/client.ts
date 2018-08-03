@@ -15,7 +15,7 @@ import * as InkLanguageServer from "ink-language-server";
 /**
  * Maps workspace URIs with their corrresponding story URIs.
  */
-export let compiledStories: Map<Uri, Uri> = new Map();
+export let compiledStories: Map<string, Uri> = new Map();
 
 let client: LanguageClient;
 
@@ -38,10 +38,15 @@ export function activateLanguageClient(context: ExtensionContext) {
     // If the extension is launched in debug mode then the debug server options are used
     // Otherwise the run options are used
     const serverOptions: ServerOptions = {
-        run: { module: SERVER_HOME, transport: TransportKind.ipc },
+        run: {
+            module: SERVER_HOME,
+            transport: TransportKind.ipc,
+            args: ['--verbose']
+        },
         debug: {
             module: SERVER_HOME,
             transport: TransportKind.ipc,
+            args: ['--verbose'],
             options: debugOptions
         }
     };
@@ -90,7 +95,7 @@ export function onRuntimeNotification(
 export function compileCurrentStory() {
     const params: ExecuteCommandParams = {
         command: InkLanguageServer.Commands.compileStory,
-        arguments: [window.activeTextEditor.document.uri]
+        arguments: [window.activeTextEditor.document.uri.toString()]
     };
 
     client.sendRequest("workspace/executeCommand", params);
@@ -102,7 +107,7 @@ export function compileCurrentStory() {
 export function playCurrentStory() {
     const params: ExecuteCommandParams = {
         command: InkLanguageServer.Commands.playStory,
-        arguments: [window.activeTextEditor.document.uri]
+        arguments: [window.activeTextEditor.document.uri.toString()]
     };
 
     client.sendRequest("workspace/executeCommand", params);
@@ -142,7 +147,7 @@ function registerNotifications() {
 
 /**
  * Whenever the server sends `CompilationNotification.didCompileStory`, we'll
- * keep track of the compiled story so we can use it in the interactive preview.
+ * keep track of the compiled story so we can use it in the web export.
  */
 function registerDidCompileStoryNotification() {
     client.onNotification(
@@ -155,7 +160,7 @@ function registerDidCompileStoryNotification() {
             if (workspaceFolder) {
                 try {
                     const storyUri = Uri.parse(params.storyUri);
-                    compiledStories.set(workspaceFolder.uri, storyUri);
+                    compiledStories.set(workspaceFolder.uri.toString(), storyUri);
                 } catch (e) {
                     window.showErrorMessage(
                         `The language server returned an invalid story URI: ${e}`
