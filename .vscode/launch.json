@@ -1,7 +1,7 @@
 // A launch configuration that launches the extension inside a new window
 {
     "version": "0.1.0",
-    "configurations": [        
+    "configurations": [
         {
             "name": "Launch Extension",
             "type": "extensionHost",
@@ -12,16 +12,6 @@
             "sourceMaps": true,
             "outFiles": [ "${workspaceRoot}/out/**/*.js" ],
             "preLaunchTask": "npm: watch"
-        },
-        {
-            "name": "Attach to Server",
-            "type": "node",
-            "request": "attach",
-            "address": "localhost",
-            "protocol": "inspector",
-            "port": 6009,
-            "sourceMaps": true,
-            "outFiles": ["${workspaceRoot}/node_modules/ink-language-server/lib/**/*.js"]
         }
     ]
 }
